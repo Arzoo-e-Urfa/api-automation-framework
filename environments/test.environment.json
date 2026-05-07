@@ -1,0 +1,31 @@
+{
+	"id": "f8a12bd0-9b44-48f8-b3d6-444a9de811af",
+	"name": "Test Environment",
+	"values": [
+		{
+			"key": "base_url",
+			"value": "https://reqres.in",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "valid_email",
+			"value": "eve.holt@reqres.in",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "valid_password",
+			"value": "cityslicka",
+			"type": "default",
+			"enabled": true
+		},
+		{
+			"key": "invalid_email",
+			"value": "peter@klaven",
+			"type": "default",
+			"enabled": true
+		}
+	],
+	"_postman_variable_scope": "environment"
+}
