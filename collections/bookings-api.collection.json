@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "b1a7d6e4-44b4-4e4b-91c2-12f5a6b8c9d0",
-		"name": "Users API Automation",
+		"name": "Bookings API Automation",
 		"description": "API Automation Framework demonstrating modern QA practices including CRUD operations, Authentication, Negative Testing, and Schema Validation.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -27,7 +27,7 @@
 									"});",
 									"",
 									"pm.test(\"Response time is acceptable\", function () {",
-									"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+									"    pm.expect(pm.response.responseTime).to.be.below(3000);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -36,24 +36,24 @@
 					],
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"{{valid_email}}\",\n    \"password\": \"{{valid_password}}\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": "{\n    \"username\": \"{{valid_username}}\",\n    \"password\": \"{{valid_password}}\"\n}"
 						},
 						"url": {
-							"raw": "{{base_url}}/api/login",
+							"raw": "{{base_url}}/auth",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"api",
-								"login"
+								"auth"
 							]
 						}
 					},
@@ -66,13 +66,13 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 400\", function () {",
-									"    pm.response.to.have.status(400);",
+									"pm.test(\"Status code is 200 (Bad Credentials returns 200 with reason)\", function () {",
+									"    pm.response.to.have.status(200);",
 									"});",
 									"",
 									"pm.test(\"Error message is correct\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.error).to.eql(\"Missing password\");",
+									"    pm.expect(jsonData.reason).to.eql(\"Bad credentials\");",
 									"});"
 								],
 								"type": "text/javascript"
@@ -81,24 +81,24 @@
 					],
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"{{invalid_email}}\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": "{\n    \"username\": \"{{invalid_username}}\",\n    \"password\": \"wrongpassword\"\n}"
 						},
 						"url": {
-							"raw": "{{base_url}}/api/login",
+							"raw": "{{base_url}}/auth",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"api",
-								"login"
+								"auth"
 							]
 						}
 					},
@@ -110,35 +110,32 @@
 			"name": "2. CRUD Operations",
 			"item": [
 				{
-					"name": "POST Create User",
+					"name": "POST Create Booking",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 201\", function () {",
-									"    pm.response.to.have.status(201);",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
 									"});",
 									"",
-									"pm.test(\"Verify created user details\", function () {",
+									"pm.test(\"Verify created booking details\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.name).to.eql(\"morpheus\");",
-									"    pm.expect(jsonData.job).to.eql(\"leader\");",
-									"    pm.expect(jsonData).to.have.property('id');",
-									"    pm.expect(jsonData).to.have.property('createdAt');",
-									"    pm.environment.set(\"user_id\", jsonData.id);",
+									"    pm.expect(jsonData.booking.firstname).to.eql(\"Jim\");",
+									"    pm.expect(jsonData.booking.lastname).to.eql(\"Brown\");",
+									"    pm.expect(jsonData).to.have.property('bookingid');",
+									"    pm.environment.set(\"booking_id\", jsonData.bookingid);",
 									"});",
 									"",
 									"pm.test(\"Schema validation\", function () {",
 									"    var schema = {",
 									"        \"type\": \"object\",",
 									"        \"properties\": {",
-									"            \"name\": {\"type\": \"string\"},",
-									"            \"job\": {\"type\": \"string\"},",
-									"            \"id\": {\"type\": \"string\"},",
-									"            \"createdAt\": {\"type\": \"string\"}",
+									"            \"bookingid\": {\"type\": \"number\"},",
+									"            \"booking\": {\"type\": \"object\"}",
 									"        },",
-									"        \"required\": [\"name\", \"job\", \"id\", \"createdAt\"]",
+									"        \"required\": [\"bookingid\", \"booking\"]",
 									"    };",
 									"    pm.response.to.have.jsonSchema(schema);",
 									"});"
@@ -149,31 +146,36 @@
 					],
 					"request": {
 						"method": "POST",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"morpheus\",\n    \"job\": \"leader\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": "{\n    \"firstname\" : \"Jim\",\n    \"lastname\" : \"Brown\",\n    \"totalprice\" : 111,\n    \"depositpaid\" : true,\n    \"bookingdates\" : {\n        \"checkin\" : \"2018-01-01\",\n        \"checkout\" : \"2019-01-01\"\n    },\n    \"additionalneeds\" : \"Breakfast\"\n}"
 						},
 						"url": {
-							"raw": "{{base_url}}/api/users",
+							"raw": "{{base_url}}/booking",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"api",
-								"users"
+								"booking"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "GET Single User",
+					"name": "GET Single Booking",
 					"event": [
 						{
 							"listen": "test",
@@ -183,10 +185,9 @@
 									"    pm.response.to.have.status(200);",
 									"});",
 									"",
-									"pm.test(\"Response has data object\", function () {",
+									"pm.test(\"Response has data\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData).to.have.property('data');",
-									"    pm.expect(jsonData.data.id).to.eql(2);",
+									"    pm.expect(jsonData.firstname).to.eql(\"Jim\");",
 									"});"
 								],
 								"type": "text/javascript"
@@ -195,23 +196,28 @@
 					],
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
 						"url": {
-							"raw": "{{base_url}}/api/users/2",
+							"raw": "{{base_url}}/booking/{{booking_id}}",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"api",
-								"users",
-								"2"
+								"booking",
+								"{{booking_id}}"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "PUT Update User",
+					"name": "PUT Update Booking",
 					"event": [
 						{
 							"listen": "test",
@@ -221,10 +227,9 @@
 									"    pm.response.to.have.status(200);",
 									"});",
 									"",
-									"pm.test(\"User updated successfully\", function () {",
+									"pm.test(\"Booking updated successfully\", function () {",
 									"    var jsonData = pm.response.json();",
-									"    pm.expect(jsonData.job).to.eql(\"zion resident\");",
-									"    pm.expect(jsonData).to.have.property('updatedAt');",
+									"    pm.expect(jsonData.firstname).to.eql(\"James\");",
 									"});"
 								],
 								"type": "text/javascript"
@@ -233,39 +238,49 @@
 					],
 					"request": {
 						"method": "PUT",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Cookie",
+								"value": "token={{auth_token}}",
+								"type": "text"
+							}
+						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"name\": \"morpheus\",\n    \"job\": \"zion resident\"\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
+							"raw": "{\n    \"firstname\" : \"James\",\n    \"lastname\" : \"Brown\",\n    \"totalprice\" : 111,\n    \"depositpaid\" : true,\n    \"bookingdates\" : {\n        \"checkin\" : \"2018-01-01\",\n        \"checkout\" : \"2019-01-01\"\n    },\n    \"additionalneeds\" : \"Breakfast\"\n}"
 						},
 						"url": {
-							"raw": "{{base_url}}/api/users/2",
+							"raw": "{{base_url}}/booking/{{booking_id}}",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"api",
-								"users",
-								"2"
+								"booking",
+								"{{booking_id}}"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "DELETE User",
+					"name": "DELETE Booking",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
 								"exec": [
-									"pm.test(\"Status code is 204\", function () {",
-									"    pm.response.to.have.status(204);",
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
 									"});"
 								],
 								"type": "text/javascript"
@@ -274,16 +289,26 @@
 					],
 					"request": {
 						"method": "DELETE",
-						"header": [],
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Cookie",
+								"value": "token={{auth_token}}",
+								"type": "text"
+							}
+						],
 						"url": {
-							"raw": "{{base_url}}/api/users/2",
+							"raw": "{{base_url}}/booking/{{booking_id}}",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"api",
-								"users",
-								"2"
+								"booking",
+								"{{booking_id}}"
 							]
 						}
 					},
@@ -295,7 +320,7 @@
 			"name": "3. Negative Testing",
 			"item": [
 				{
-					"name": "GET User - Not Found",
+					"name": "GET Booking - Not Found",
 					"event": [
 						{
 							"listen": "test",
@@ -311,16 +336,58 @@
 					],
 					"request": {
 						"method": "GET",
-						"header": [],
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
 						"url": {
-							"raw": "{{base_url}}/api/users/23",
+							"raw": "{{base_url}}/booking/999999",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
-								"api",
-								"users",
-								"23"
+								"booking",
+								"999999"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE Booking - Unauthorized (No Token)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 403\", function () {",
+									"    pm.response.to.have.status(403);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/booking/{{booking_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"booking",
+								"{{booking_id}}"
 							]
 						}
 					},
@@ -352,7 +419,7 @@
 	"variable": [
 		{
 			"key": "base_url",
-			"value": "https://reqres.in",
+			"value": "https://restful-booker.herokuapp.com",
 			"type": "string"
 		}
 	]

@@ -4,9 +4,9 @@
   "description": "A clean, scalable, professional API testing framework using Postman and Newman.",
   "main": "index.js",
   "scripts": {
-    "test:dev": "newman run collections/users-api.collection.json -e environments/dev.environment.json -r cli,htmlextra",
-    "test:test": "newman run collections/users-api.collection.json -e environments/test.environment.json -r cli,htmlextra",
-    "test:ci": "newman run collections/users-api.collection.json -e environments/test.environment.json -r cli",
+    "test:dev": "newman run collections/bookings-api.collection.json -e environments/dev.environment.json -r cli,htmlextra",
+    "test:test": "newman run collections/bookings-api.collection.json -e environments/test.environment.json -r cli,htmlextra",
+    "test:ci": "newman run collections/bookings-api.collection.json -e environments/test.environment.json -r cli",
     "report": "open newman/*.html"
   },
   "keywords": [

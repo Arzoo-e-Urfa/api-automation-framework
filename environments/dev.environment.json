@@ -4,25 +4,25 @@
 	"values": [
 		{
 			"key": "base_url",
-			"value": "https://reqres.in",
+			"value": "https://restful-booker.herokuapp.com",
 			"type": "default",
 			"enabled": true
 		},
 		{
-			"key": "valid_email",
-			"value": "eve.holt@reqres.in",
+			"key": "valid_username",
+			"value": "admin",
 			"type": "default",
 			"enabled": true
 		},
 		{
 			"key": "valid_password",
-			"value": "cityslicka",
+			"value": "password123",
 			"type": "default",
 			"enabled": true
 		},
 		{
-			"key": "invalid_email",
-			"value": "peter@klaven",
+			"key": "invalid_username",
+			"value": "invaliduser",
 			"type": "default",
 			"enabled": true
 		}
