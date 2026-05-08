@@ -1,13 +1,13 @@
 {
   "name": "api-automation-framework",
   "version": "1.0.0",
-  "description": "A clean, scalable, professional API testing framework using Postman and Newman.",
+  "description": "AI-powered API automation framework using Postman, Newman, and GitHub Actions for scalable API testing and CI/CD workflows.",
   "main": "index.js",
   "scripts": {
-    "test:dev": "newman run collections/bookings-api.collection.json -e environments/dev.environment.json -r cli,htmlextra",
-    "test:test": "newman run collections/bookings-api.collection.json -e environments/test.environment.json -r cli,htmlextra",
-    "test:ci": "newman run collections/bookings-api.collection.json -e environments/test.environment.json -r cli",
-    "report": "open newman/*.html"
+    "test:dev": "newman run collections/bookings-api.collection.json -e environments/dev.environment.json -r cli,htmlextra --reporter-htmlextra-export reports/dev-report.html",
+    "test:test": "newman run collections/bookings-api.collection.json -e environments/test.environment.json -r cli,htmlextra --reporter-htmlextra-export reports/test-report.html",
+    "test:ci": "newman run collections/bookings-api.collection.json -e environments/test.environment.json -r cli,htmlextra --reporter-htmlextra-export reports/ci-report.html",
+    "report": "open reports/*.html"
   },
   "keywords": [
     "postman",
@@ -15,7 +15,8 @@
     "api-testing",
     "automation",
     "qa",
-    "portfolio"
+    "portfolio",
+    "ci-cd"
   ],
   "author": "Senior QA Automation Engineer",
   "license": "MIT",

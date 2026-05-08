@@ -5,31 +5,33 @@ on:
     branches: [ main, master ]
   pull_request:
     branches: [ main, master ]
+  workflow_dispatch: # Allows manual trigger from GitHub UI
 
 jobs:
-  api-tests:
+  execute-api-tests:
+    name: Run Postman Collections
     runs-on: ubuntu-latest
     
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v4
 
-    - name: Setup Node.js
+    - name: Setup Node.js Environment
       uses: actions/setup-node@v4
       with:
         node-version: '20'
         cache: 'npm'
 
-    - name: Install Dependencies (Newman & HTML Reporter)
+    - name: Install Dependencies
       run: npm ci
 
-    - name: Execute Postman Collection
+    - name: Execute API Tests via Newman
       run: npm run test:ci
 
-    - name: Upload Test Report
-      if: always()
+    - name: Upload HTML Test Report
+      if: always() # Upload report even if tests fail
       uses: actions/upload-artifact@v4
       with:
-        name: newman-report
-        path: newman/
-        retention-days: 14
+        name: api-test-report
+        path: reports/
+        retention-days: 30
